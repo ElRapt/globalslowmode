@@ -9,13 +9,26 @@ credentials = json.load(open('credentials.json'))
 class MyClient(discord.Client):
     async def on_ready(self):
         tree.isSlowed=False;
+        tree.activeSlow=False;
+        tree.slowTime = 0;
         await tree.sync(guild=discord.Object(id=credentials.get('guild_id')))
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
 
 
     async def on_message(self, message):
-        if tree.isSlowed == False:
+        if tree.activeSlow == True:
+            if tree.isSlowed == False:
+                tree.isSlowed=True;
+                await asyncio.sleep(tree.slowTime)
+                tree.isSlowed=False;
+            else:
+                if message.author.id == self.user.id:
+                    return
+                await message.reply("True slowmode on!")
+                await message.delete()
+
+        elif tree.isSlowed == False:
             if message.author.id == self.user.id:
                 return
 
@@ -63,6 +76,22 @@ async def first_command(interaction, seconds:int):
 @tree.command(name = "revoke", description = "Ends slowmode", guild=discord.Object(id=credentials.get('guild_id'))) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
 async def first_command(interaction):
     await interaction.response.send_message("Slowmode revoked", ephemeral=True)
+    tree.isSlowed=False;
+
+@tree.command(name = "trueslow", description = "Launches true slow mode", guild=discord.Object(id=credentials.get('guild_id'))) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
+async def first_command(interaction, seconds:int):
+    try:
+        tree.slowTime = int(seconds)
+    except ValueError:
+        await interaction.response.send_message("Enter a valid time", ephemeral=True)
+        return
+    await interaction.response.send_message("True slow activated", ephemeral=True)
+    tree.activeSlow=True;
+
+@tree.command(name = "truerevoke", description = "Ends true slowmode", guild=discord.Object(id=credentials.get('guild_id'))) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
+async def first_command(interaction):
+    await interaction.response.send_message("True Slowmode revoked", ephemeral=True)
+    tree.activeSlow=False;
     tree.isSlowed=False;
 
 client.run(credentials.get('token'))
