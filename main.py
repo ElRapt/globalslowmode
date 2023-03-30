@@ -29,7 +29,7 @@ class MyClient(discord.Client):
                 await message.reply("True slowmode on!")
                 await message.delete()
         elif tree.embedSlow == True:
-            if message.embeds:
+            if (message.embeds or message.attachments):
                 if tree.isSlowed == False:
                     tree.isSlowed=True;
                     await asyncio.sleep(tree.slowTime)
