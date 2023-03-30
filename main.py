@@ -11,6 +11,7 @@ class MyClient(discord.Client):
         tree.isSlowed=False;
         tree.activeSlow=False;
         tree.slowTime = 0;
+        tree.embedSlow = False;
         await tree.sync(guild=discord.Object(id=credentials.get('guild_id')))
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
@@ -27,18 +28,24 @@ class MyClient(discord.Client):
                     return
                 await message.reply("True slowmode on!")
                 await message.delete()
-
-        elif tree.isSlowed == False:
-            if message.author.id == self.user.id:
-                return
-
-            if message.content.startswith('!hello'):
-                await message.reply('Hello!', mention_author=True)
+        elif tree.embedSlow == True:
+            if message.embeds:
+                if tree.isSlowed == False:
+                    tree.isSlowed=True;
+                    await asyncio.sleep(tree.slowTime)
+                    tree.isSlowed=False;
+                else:
+                    if message.author.id == self.user.id:
+                        return
+                    await message.reply("Embed slowmode on!")
+                    await message.delete()
         else:
             if message.author.id == self.user.id:
                 return
             await message.reply("Slowmode on!")
             await message.delete()
+
+
 
         #if message.content.startswith('!ping'):
          #   await message.response.send_message(content="Only you can see this !", ephemeral=True)
@@ -93,5 +100,16 @@ async def first_command(interaction):
     await interaction.response.send_message("True Slowmode revoked", ephemeral=True)
     tree.activeSlow=False;
     tree.isSlowed=False;
+
+
+@tree.command(name = "embedslow", description = "Launches slow mode for embeds", guild=discord.Object(id=credentials.get('guild_id'))) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
+async def first_command(interaction, seconds:int):
+    try:
+        tree.slowTime = int(seconds)
+    except ValueError:
+        await interaction.response.send_message("Enter a valid time", ephemeral=True)
+        return
+    await interaction.response.send_message("Embed slow activated", ephemeral=True)
+    tree.embedSlow=True;
 
 client.run(credentials.get('token'))
