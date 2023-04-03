@@ -12,6 +12,7 @@ class MyClient(discord.Client):
         tree.activeSlow=False;
         tree.slowTime = 0;
         tree.embedSlow = False;
+        tree.slowMessage = "Slowmode activated"
         await tree.sync(guild=discord.Object(id=credentials.get('guild_id')))
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
@@ -26,7 +27,7 @@ class MyClient(discord.Client):
             else:
                 if message.author.id == self.user.id:
                     return
-                await message.reply("True slowmode on!")
+                await message.author.send(tree.slowMessage)
                 await message.delete()
         elif tree.embedSlow == True:
             if (message.embeds or message.attachments):
@@ -37,7 +38,7 @@ class MyClient(discord.Client):
                 else:
                     if message.author.id == self.user.id:
                         return
-                    await message.reply("Embed slowmode on!")
+                    await message.author.send(tree.slowMessage)
                     await message.delete()
 
 
@@ -54,9 +55,10 @@ tree = app_commands.CommandTree(client)
 
 
 @tree.command(name = "slowmode", description = "Launches slow mode", guild=discord.Object(id=credentials.get('guild_id'))) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
-async def first_command(interaction, seconds:int):
+async def first_command(interaction, seconds:int, message:str):
     try:
         tree.slowTime = int(seconds)
+        tree.slowMessage = message
     except ValueError:
         await interaction.response.send_message("Enter a valid time", ephemeral=True)
         return
@@ -70,9 +72,10 @@ async def first_command(interaction):
 
 
 @tree.command(name = "embedslow", description = "Launches slow mode for embeds", guild=discord.Object(id=credentials.get('guild_id'))) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
-async def first_command(interaction, seconds:int):
+async def first_command(interaction, seconds:int, message:str):
     try:
         tree.slowTime = int(seconds)
+        tree.slowMessage = message
     except ValueError:
         await interaction.response.send_message("Enter a valid time", ephemeral=True)
         return
