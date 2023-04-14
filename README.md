@@ -42,4 +42,4 @@ If you encounter any issues or have suggestions for improvements, feel free to o
 This project is licensed under the MIT License. Feel free to use, modify, and distribute this bot as per the terms of the license.
 ## Credits
 
-This Discord Slowmode Bot was developed by ElRaptou and uses discord.py. 
+Global Slow Mode was developed by ElRaptou and uses discord.py. 
