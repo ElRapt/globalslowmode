@@ -1,7 +1,7 @@
-#Discord Slowmode Bot
+# Discord Slowmode Bot
 
 The Discord Slowmode Bot is a powerful tool that helps you manage the rate of messages, embeds, links, and images being sent in your Discord server. With just a few simple commands, you can easily set up global timers for messages and enforce slowmode across all channels the bot has access to. Say goodbye to spammy messages and enjoy a more organized and controlled server environment.
-#Features
+# Features
 
     Global timer for messages: Set a timer in seconds, and the bot will enforce slowmode across all channels it has access to. This means that users can only send one message every X seconds, as defined by the timer.
 
@@ -15,7 +15,7 @@ The Discord Slowmode Bot is a powerful tool that helps you manage the rate of me
 
         /embedrevoke: Revokes embed slowmode and resets the timer.
 
-#Usage
+# Usage
 
     Create your own discord application.
 
@@ -32,13 +32,14 @@ The Discord Slowmode Bot is a powerful tool that helps you manage the rate of me
     /embedrevoke: Revoke embed slowmode and reset the timer.
 
 Note: Only users with the administrator permissions can use these commands.
+
 Note2 : This bot shares command tree variables with all servers it is present on. As such, it is not recommanded to use on multiple servers unless you plan to set the same slowmodes.
-##Contributing
+## Contributing
 
 If you encounter any issues or have suggestions for improvements, feel free to open an issue or submit a pull request on the bot's GitHub repository. Contributions are always welcome and appreciated.
-##License
+## License
 
 This project is licensed under the MIT License. Feel free to use, modify, and distribute this bot as per the terms of the license.
-##Credits
+## Credits
 
 This Discord Slowmode Bot was developed by ElRaptou and uses discord.py. 
