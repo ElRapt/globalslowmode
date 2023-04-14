@@ -1,6 +1,6 @@
-# Discord Slowmode Bot
+# Global Slow Mode
 
-The Discord Slowmode Bot is a powerful tool that helps you manage the rate of messages, embeds, links, and images being sent in your Discord server. With just a few simple commands, you can easily set up global timers for messages and enforce slowmode across all channels the bot has access to. Say goodbye to spammy messages and enjoy a more organized and controlled server environment.
+The Global Slow Mode Bot is a powerful tool that helps you manage the rate of messages, embeds, links, and images being sent in your Discord server. With just a few simple commands, you can easily set up global timers for messages and enforce slowmode across all channels the bot has access to. Say goodbye to spammy messages and enjoy a more organized and controlled server environment.
 # Features
 
     Global timer for messages: Set a timer in seconds, and the bot will enforce slowmode across all channels it has access to. This means that users can only send one message every X seconds, as defined by the timer.
