@@ -5,7 +5,6 @@ This bot helps enforce a global slow mode in a discord server. It offers both st
 ## Table of Contents
 - [Features](#features)
 - [Commands](#commands)
-- [Setup](#setup)
 - [License](#license)
 
 ## Features
