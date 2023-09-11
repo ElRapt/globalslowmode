@@ -30,7 +30,7 @@ class MyClient(discord.Client):
             if settings.get('isSlowed') == 0:  # False is represented as 0
                 settings['isSlowed'] = 1  # True
                 update_server_settings(str(message.guild.id), settings)
-                await asyncio.sleep(settings.get('slowTime', 0))
+                await asyncio.sleep(settings.get('slowTime'))
                 settings['isSlowed'] = 0  # False
                 update_server_settings(str(message.guild.id), settings)
             else:
@@ -44,7 +44,7 @@ class MyClient(discord.Client):
                 if settings.get('isSlowed') == 0:  # False is represented as 0
                     settings['isSlowed'] = 1  # True
                     update_server_settings(str(message.guild.id), settings)
-                    await asyncio.sleep(settings.get('slowTime', 0))
+                    await asyncio.sleep(settings.get('slowTime'))
                     settings['isSlowed'] = 0  # False
                     update_server_settings(str(message.guild.id), settings)
                 else:
