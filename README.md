@@ -2,6 +2,8 @@
 
 This bot helps enforce a global slow mode in a discord server. It offers both standard and embed slow modes, which can be managed separately.
 
+All servers have their own settings, which are stored in the database. This ensures resilience in case the bot goes down.
+
 ## Table of Contents
 - [Features](#features)
 - [Commands](#commands)
