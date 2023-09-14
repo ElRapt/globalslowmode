@@ -11,6 +11,14 @@ This bot helps enforce a global slow mode in a discord server. It offers both st
 
 All servers have their own settings, which are stored in the database. This ensures resilience in case the bot goes down.
 
+<br>
+<p align="center">
+  <a href="https://discord.com/oauth2/authorize?client_id=1088502376048107676&permissions=93184&scope=bot">
+    <img src="https://img.shields.io/badge/Invite-Discord%20Bot-blue?style=for-the-badge&logo=discord" alt="Invite">
+  </a>
+</p>
+
+
 ## Table of Contents
 - [Features](#features)
 - [Commands](#commands)
