@@ -17,7 +17,7 @@ All servers have their own settings, which are stored in the database. This ensu
     <img src="https://img.shields.io/badge/Invite-Discord%20Bot-blue?style=for-the-badge&logo=discord" alt="Invite">
   </a>
 </p>
-
+<br>
 
 ## Table of Contents
 - [Features](#features)
