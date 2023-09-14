@@ -1,5 +1,11 @@
 # Global Slow Mode 
 
+![GitHub](https://img.shields.io/github/license/ElRapt/globalslowmode)
+![Python](https://img.shields.io/badge/Python-3.x-blue)
+![Discord](https://img.shields.io/badge/Discord-Bot-blueviolet)
+![Size](https://img.shields.io/badge/Size-32MB-yellowgreen)
+
+
 This bot helps enforce a global slow mode in a discord server. It offers both standard and embed slow modes, which can be managed separately.
 
 All servers have their own settings, which are stored in the database. This ensures resilience in case the bot goes down.
