@@ -1,6 +1,16 @@
 import sqlite3
 from typing import Optional, Dict
 
+
+def reset_isSlowed_for_all_servers():
+    con = sqlite3.connect("settings.db")
+    cur = con.cursor()
+    
+    cur.execute("UPDATE Server SET isSlowed=0")
+    con.commit()
+    con.close()
+
+
 def init_db():
     con = sqlite3.connect("settings.db")
     cur = con.cursor()
