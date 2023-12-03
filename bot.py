@@ -1,14 +1,18 @@
 import discord
-from discord import app_commands
-from database import get_server_settings, update_server_settings, set_default_server_settings
-from commands import init_bot_commands
+from database.settings import get_server_settings, update_server_settings, set_default_server_settings
 import asyncio
 
-class MyClient(discord.Client):
+cogs_list = [
+    'slow',
+    'embedslow',
+]
+
+
+class MyBot(discord.bot.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.tree = app_commands.CommandTree(self)
-        init_bot_commands(self, self.tree)
+        for cog in cogs_list:
+            self.load_extension(f'cogs.{cog}')
 
     def get_server_settings(self, guild_id: str):
         settings = get_server_settings(guild_id)
