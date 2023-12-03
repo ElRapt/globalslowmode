@@ -1,17 +1,15 @@
 import discord
 from discord.ext import commands
-from database.settings import get_server_settings, update_server_settings, set_default_server_settings
-
+from database.settings import get_channel_settings, set_channel_settings, ensure_channel_settings
 
 class EmbedSlow(commands.Cog):
 
     @discord.slash_command(description="Setup the slowmode for embeds in this channel")
     async def embedslow(self, ctx, seconds: int, message: str):
-        settings = get_server_settings(str(ctx.guild.id))
-        if not settings:
-            set_default_server_settings(str(ctx.guild.id))
-            settings = get_server_settings(str(ctx.guild.id))
-
+        channel_id = str(ctx.channel.id)
+        guild_id = str(ctx.guild.id)
+        ensure_channel_settings(channel_id, guild_id)
+        settings = get_channel_settings(channel_id)
 
         try:
             settings['slowTime'] = int(seconds)
@@ -22,18 +20,17 @@ class EmbedSlow(commands.Cog):
 
         await ctx.respond("Embed slow activated", ephemeral=True)
         settings['embedSlow'] = True
-        update_server_settings(str(ctx.guild.id), settings)
+        set_channel_settings(channel_id, settings)
 
     @discord.slash_command(description="End the slowmode for embeds in this channel")
     async def embedrevoke(self, ctx):
-        settings = get_server_settings(str(ctx.guild.id))
-        if not settings:
-            set_default_server_settings(str(ctx.guild.id))
-            settings = get_server_settings(str(ctx.guild.id))
+        channel_id = str(ctx.channel.id)
+        ensure_channel_settings(channel_id, str(ctx.guild.id))
+        settings = get_channel_settings(channel_id)
 
         settings['embedSlow'] = False
-        update_server_settings(str(ctx.guild.id), settings)
-        await ctx.response.send_message("Embed slowmode revoked", ephemeral=True)
+        set_channel_settings(channel_id, settings)
+        await ctx.respond("Embed slowmode revoked", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(EmbedSlow(bot))
