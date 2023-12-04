@@ -1,7 +1,8 @@
 import discord
 import time
-from database.settings import get_channel_settings, set_channel_settings, ensure_channel_settings, get_slowmode_cooldown, set_slowmode_cooldown
-import asyncio
+from database.settings import get_channel_settings, set_channel_settings, ensure_channel_settings
+from database.slowmode import get_slowmode_cooldown, set_slowmode_cooldown
+
 
 cogs_list = [
     'slow',
