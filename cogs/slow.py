@@ -32,7 +32,7 @@ class Slow(commands.Cog):
         set_channel_settings(channel_id, settings)
 
     @discord.slash_command(description="End the slowmode in this channel")
-    async def revoke_command(self, ctx):
+    async def revoke(self, ctx):
         settings = get_channel_settings(str(ctx.guild.id))
         ensure_channel_settings(str(ctx.channel.id), str(ctx.guild.id))
         settings['activeSlow'] = False

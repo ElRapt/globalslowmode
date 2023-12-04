@@ -7,6 +7,7 @@ from database.slowmode import get_slowmode_cooldown, set_slowmode_cooldown
 cogs_list = [
     'slow',
     'embedslow',
+    'help'
 ]
 
 
