@@ -4,6 +4,7 @@ from database.settings import get_channel_settings, set_channel_settings, ensure
 
 class EmbedSlow(commands.Cog):
 
+    @commands.has_permissions(administrator = True)
     @discord.slash_command(description="Setup the slowmode for embeds in this channel")
     async def embedslow(self, ctx, seconds: int, message: str):
         channel_id = str(ctx.channel.id)
@@ -23,6 +24,7 @@ class EmbedSlow(commands.Cog):
         settings['embedSlow'] = True
         set_channel_settings(channel_id, settings)
 
+    @commands.has_permissions(administrator = True)
     @discord.slash_command(description="End the slowmode for embeds in this channel")
     async def embedrevoke(self, ctx):
         channel_id = str(ctx.channel.id)

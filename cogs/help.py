@@ -4,7 +4,8 @@ from discord.ext import commands
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+        
+    @commands.has_permissions(administrator = True)
     @discord.slash_command(description="Display help information for bot commands")
     async def help(self, ctx):
         embed = discord.Embed(title="Bot Commands Help", color=discord.Color.blue())

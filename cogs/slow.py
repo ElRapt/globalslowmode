@@ -4,6 +4,7 @@ from database.settings import get_channel_settings, set_channel_settings, ensure
 
 class Slow(commands.Cog):
 
+    @commands.has_permissions(administrator = True)
     @discord.slash_command(description="Setup the slowmode in this channel")
     async def slowmode(self, ctx, seconds: int, message: str):
         channel_id = str(ctx.channel.id)
@@ -27,6 +28,7 @@ class Slow(commands.Cog):
         settings['activeSlow'] = True
         set_channel_settings(channel_id, settings)
 
+    @commands.has_permissions(administrator = True)
     @discord.slash_command(description="End the slowmode in this channel")
     async def revoke(self, ctx):
         settings = get_channel_settings(str(ctx.guild.id))
