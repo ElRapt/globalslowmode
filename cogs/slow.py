@@ -8,14 +8,10 @@ class Slow(commands.Cog):
     async def slowmode(self, ctx, seconds: int, message: str):
         channel_id = str(ctx.channel.id)
         guild_id = str(ctx.guild.id)
-
-        # Ensure the channel settings exist
+        
         ensure_channel_settings(channel_id, guild_id)
-
-        # Fetch the channel settings
         settings = get_channel_settings(channel_id)
 
-        # Check if settings are correctly fetched
         if settings is None:
             await ctx.respond("Failed to retrieve channel settings.", ephemeral=True)
             return

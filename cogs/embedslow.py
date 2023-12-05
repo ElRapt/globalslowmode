@@ -8,6 +8,7 @@ class EmbedSlow(commands.Cog):
     async def embedslow(self, ctx, seconds: int, message: str):
         channel_id = str(ctx.channel.id)
         guild_id = str(ctx.guild.id)
+        
         ensure_channel_settings(channel_id, guild_id)
         settings = get_channel_settings(channel_id)
 

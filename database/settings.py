@@ -12,7 +12,6 @@ def get_channel_settings(channel_id: str):
     con.close()
     
     if row:
-        # Map each column to its corresponding value
         return {
             'channel_id': row[0],
             'guild_id': row[1],
