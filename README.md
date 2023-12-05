@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/license/ElRapt/globalslowmode)
 ![Language](https://img.shields.io/badge/Language-Python-blue)
 ![Discord](https://img.shields.io/badge/Discord-Bot-blueviolet)
-![Library](https://img.shields.io/badge/Library-discord.py-yellow)
+![Library](https://img.shields.io/badge/Library-pycord-yellow)
 ![Size](https://img.shields.io/badge/Size-32MB-yellowgreen)
 
 
