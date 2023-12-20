@@ -1,8 +1,8 @@
 import discord
 import time
+import logging
 from database.settings import get_channel_settings, set_channel_settings, ensure_channel_settings
 from database.slowmode import get_slowmode_cooldown, set_slowmode_cooldown
-
 
 cogs_list = [
     'slow',
@@ -10,58 +10,92 @@ cogs_list = [
     'help'
 ]
 
+logging.basicConfig(level=logging.INFO)
 
-class MyBot(discord.bot.Bot):
+class MyBot(discord.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.load_cogs()
+
+    def load_cogs(self):
         for cog in cogs_list:
-            self.load_extension(f'cogs.{cog}')
-
-    def get_channel_settings(self, guild_id: str):
-        settings = get_channel_settings(guild_id)
-        if not settings:
-            ensure_channel_settings(guild_id)
-            settings = get_channel_settings(guild_id)
-        return settings
-
+            try:
+                self.load_extension(f'cogs.{cog}')
+            except Exception as e:
+                logging.error(f"Error loading cog {cog}: {e}")
 
     async def on_ready(self):
-        print(f'Logged in as {self.user} (ID: {self.user.id})')
-        print('------')
-            
+        logging.info(f'Logged in as {self.user} (ID: {self.user.id})')
+
+
+
     async def on_message(self, message):
-            if message.author.id == self.user.id or message.guild is None:
-                return
+        
+        if self.is_message_ignorable(message):
+            return
 
-            channel_id = str(message.channel.id)
-            guild_id = str(message.guild.id)
-            current_time = int(time.time())
+        try:
+            await self.handle_message(message)
+        except discord.errors.Forbidden as e:
+            logging.warning(f"Permission error: {e}")
+        except discord.errors.HTTPException as e:
+            logging.warning(f"Discord HTTP error: {e}")
+        except Exception as e:
+            logging.error(f"Unexpected error: {e}")
 
-            ensure_channel_settings(channel_id, guild_id)
+    def is_message_ignorable(self, message):
+        return message.author.id == self.user.id or message.guild is None
 
-            settings = get_channel_settings(channel_id)
-            if settings is None:
-                print(f"Failed to retrieve settings for channel: {channel_id}")
-                return  
-
-            cooldown_end_time = get_slowmode_cooldown(channel_id)
-
-            if cooldown_end_time and current_time < cooldown_end_time:
-                slow_message = settings.get('slowMessage', 'You are in slow mode, please wait before sending another message.')
-                await message.author.send(slow_message)
-                await message.delete()
-                return
-
+    async def handle_message(self, message):
+        channel_id = str(message.channel.id)
+        settings = self.fetch_channel_settings(channel_id)
+        if settings:
+            logging.info(f"Checking message in channel {channel_id} from {message.author.display_name}")
             if settings.get('activeSlow') or settings.get('embedSlow'):
-                if settings.get('activeSlow') and not (message.embeds or message.attachments or 'https://vxtwitter.com/' in message.content):
-                    self.apply_slow_mode(settings, channel_id, current_time)
-                    
-                elif settings.get('embedSlow') and (message.embeds or message.attachments or 'https://vxtwitter.com/' in message.content):
-                    self.apply_slow_mode(settings, channel_id, current_time)
+                await self.check_and_apply_slow_mode(message, settings, channel_id)
 
-    def apply_slow_mode(self, settings, channel_id, current_time):
-        new_cooldown_end_time = current_time + settings.get('slowTime')
+
+    def fetch_channel_settings(self, channel_id):
+        settings = get_channel_settings(channel_id)
+        if settings is None:
+            logging.warning(f"Failed to retrieve settings for channel: {channel_id}")
+        return settings
+
+    async def check_and_apply_slow_mode(self, message, settings, channel_id):
+        ensure_channel_settings(channel_id, str(message.guild.id))
+        current_time = int(time.time())
+        cooldown_end_time = get_slowmode_cooldown(channel_id)
+
+        slow_mode_active = False
+        slow_time = 0
+        slow_message = ''
+
+        has_embeds_or_attachments = bool(message.embeds) or bool(message.attachments) or 'https://vxtwitter.com/' or 'https://fxtwitter.com/'in message.content
+        contains_discord_cdn_link = any(['https://cdn.discordapp' in message.content,
+                                        'https://media.discordapp' in message.content,
+                                        'https://images-ext-1.discordapp' in message.content,
+                                        'https://images-ext-2.discordapp' in message.content])
+        is_special_message = has_embeds_or_attachments or contains_discord_cdn_link
+        logging.info(f"Message from {message.author.display_name} in {message.channel.name}: Embeds or Attachments: {bool(message.embeds)}, Attachments: {bool(message.attachments)}, Special link: {is_special_message}, Embed slow mode active: {settings.get('embedSlow')}")
+
+
+        if is_special_message or has_embeds_or_attachments and settings.get('embedSlow'):
+            slow_mode_active = cooldown_end_time and current_time < cooldown_end_time
+            slow_time = settings.get('embedSlowTime', 60)
+            slow_message = settings.get('embedSlowMessage', 'Please wait before sending another special message.')
+        elif settings.get('activeSlow'):
+            slow_mode_active = cooldown_end_time and current_time < cooldown_end_time
+            slow_time = settings.get('slowTime', 60)
+            slow_message = settings.get('slowMessage', 'Please wait before sending another message.')
+
+        if slow_mode_active:
+            await message.delete()
+            await message.author.send(slow_message)
+        elif slow_time > 0:
+            self.apply_slow_mode(slow_time, channel_id, current_time)
+
+
+
+    def apply_slow_mode(self, slow_time, channel_id, current_time):
+        new_cooldown_end_time = current_time + slow_time
         set_slowmode_cooldown(channel_id, new_cooldown_end_time)
-
-        settings['isSlowed'] = True
-        set_channel_settings(channel_id, settings)
