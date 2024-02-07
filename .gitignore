@@ -2,3 +2,4 @@ credentials.json
 venv
 __pycache__
 settings.db
+.DS_Store

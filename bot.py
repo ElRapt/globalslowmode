@@ -66,24 +66,31 @@ class MyBot(discord.Bot):
         current_time = int(time.time())
         cooldown_end_time = get_slowmode_cooldown(channel_id)
 
+        
+        has_embeds_or_attachments = bool(message.embeds) or bool(message.attachments)
+        contains_special_link = 'https://vxtwitter.com/' in message.content or 'https://fxtwitter.com/' in message.content
+        contains_discord_cdn_link = any([
+            'https://cdn.discordapp' in message.content,
+            'https://media.discordapp' in message.content,
+            'https://images-ext-1.discordapp' in message.content,
+            'https://images-ext-2.discordapp' in message.content
+        ])
+
+        is_special_message = has_embeds_or_attachments or contains_special_link or contains_discord_cdn_link
+
+        
         slow_mode_active = False
         slow_time = 0
         slow_message = ''
 
-        has_embeds_or_attachments = bool(message.embeds) or bool(message.attachments) or 'https://vxtwitter.com/' or 'https://fxtwitter.com/'in message.content
-        contains_discord_cdn_link = any(['https://cdn.discordapp' in message.content,
-                                        'https://media.discordapp' in message.content,
-                                        'https://images-ext-1.discordapp' in message.content,
-                                        'https://images-ext-2.discordapp' in message.content])
-        is_special_message = has_embeds_or_attachments or contains_discord_cdn_link
-        logging.info(f"Message from {message.author.display_name} in {message.channel.name}: Embeds or Attachments: {bool(message.embeds)}, Attachments: {bool(message.attachments)}, Special link: {is_special_message}, Embed slow mode active: {settings.get('embedSlow')}")
-
-
-        if is_special_message or has_embeds_or_attachments and settings.get('embedSlow'):
+        
+        if is_special_message and settings.get('embedSlow'):
             slow_mode_active = cooldown_end_time and current_time < cooldown_end_time
             slow_time = settings.get('embedSlowTime', 60)
             slow_message = settings.get('embedSlowMessage', 'Please wait before sending another special message.')
-        elif settings.get('activeSlow'):
+
+        
+        elif not is_special_message and settings.get('activeSlow'):
             slow_mode_active = cooldown_end_time and current_time < cooldown_end_time
             slow_time = settings.get('slowTime', 60)
             slow_message = settings.get('slowMessage', 'Please wait before sending another message.')
