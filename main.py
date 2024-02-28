@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import signal
 from bot import MyBot
 from utils.credentials import load_credentials
 from database.init import init_db, reset_isSlowed_for_all_servers
@@ -26,6 +27,9 @@ async def reconnect_loop():
                 await asyncio.sleep(5)
 
 async def main():
+    
+    for sig in ('SIGINT', 'SIGTERM'):
+        loop.add_signal_handler(getattr(signal, sig), lambda: asyncio.create_task(bot.close()))
     try:
         await bot.start(credentials['token'])
     except KeyboardInterrupt:
@@ -33,6 +37,11 @@ async def main():
     except Exception as e:
         print(f"Fatal exception {e}, running reconnect loop.")
         await reconnect_loop()
+
+def handle_exit_signal(_signal, _frame):
+    print(f"Received exit signal {_signal}, shutting down.")
+    asyncio.create_task(bot.close())
+
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
